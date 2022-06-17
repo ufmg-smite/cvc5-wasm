@@ -78,7 +78,7 @@ echo '   ---GMP'; {
     echo "Building GMP:"
     echo ""
     cd ${GMP_DIR}
-    emconfigure ./configure --with-pic --disable-assembly --host none --enable-cxx --disable-shared
+    emconfigure ./configure --with-pic --disable-assembly --disable-shared --disable-assembly --host none
     emmake make -j${CORES_TO_COMPILE}
 } >> "$LOG_FILE" 2>&1
 
@@ -89,16 +89,18 @@ echo '   ---ANTLR'; {
     cd ${ANTLR_DIR}
     emconfigure ./configure --with-pic --disable-abiflags --disable-antlrdebug --enable-64bit --disable-shared
     emmake make -j${CORES_TO_COMPILE}
-} >> "$LOGFILE" 2>&1
+} >> "$LOG_FILE" 2>&1
 
 # mkdir -p "${INCLUDE_DIR}"
 # ln -s /usr/include/boost/ "${INCLUDE_DIR}"
 
 CVC5_CONFIGURE_OPTS=(--static --static-binary --no-tracing --no-assertions
-                     --no-debug-symbols --no-unit-testing --name=production)
+                     --no-debug-symbols --no-unit-testing --name=production
+                     --auto-download)
 
-CVC5_CONFIGURE_ENV=(ANTLR="${DEP_DIR}antlr-3.4-complete.jar"
-                    CFLAGS="-I${GMP_DIR} -I${ANTLR_DIR}"
+CVC5_CONFIGURE_ENV=(
+                    # ANTLR="${DEP_DIR}antlr-3.4-complete.jar"
+                    CXXFLAGS="-I${GMP_DIR} -I${ANTLR_DIR}"
                     LDFLAGS="-L${GMP_DIR}.libs -L${ANTLR_DIR}.libs")
 
 echo '   ---CVC5'; {   
