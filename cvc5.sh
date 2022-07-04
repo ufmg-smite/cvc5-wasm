@@ -57,14 +57,15 @@ echo "   ---CVC5"; {
     echo ""
     echo "Configuring CVC5:"
     echo ""
-    
+
+    EMCC_WASM_FLAGS=(-s EXPORTED_FUNCTIONS=_main -s EXPORTED_RUNTIME_METHODS=ccall,cwrap -s INCOMING_MODULE_JS_API=arguments)
+
     CVC5_CONFIGURE_OPTS=(--static --static-binary --no-tracing --no-assertions
                         --no-debug-symbols --no-unit-testing --name=${BUILD_NAME} --auto-download
                         )
                         #  --no-poly)
 
-    CVC5_CONFIGURE_ENV=(CXXFLAGS="-I${GMP_DIR} -I${ANTLR_DIR}"
-                        LDFLAGS="-L${GMP_DIR}.libs -L${ANTLR_DIR}.libs")
+    CVC5_CONFIGURE_ENV=(LDFLAGS="${EMCC_WASM_FLAGS[@]}")
 
     cd ${CVC5_DIR}
     env "${CVC5_CONFIGURE_ENV[@]}" emconfigure ./configure.sh "${CVC5_CONFIGURE_OPTS[@]}"
@@ -80,3 +81,5 @@ echo '   ---CVC5'; {
     cd ./${BUILD_NAME}
     emmake make -j${CORES_TO_COMPILE}
 } >> "${LOG_DIR}build.log" 2>&1
+
+cp ${CVC5_DIR}${BUILD_NAME}/bin/cvc5.wasm ${BASE_DIR}/cvc5.wasm
