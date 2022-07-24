@@ -58,19 +58,31 @@ echo "   ---CVC5"; {
     echo "Configuring CVC5:"
     echo ""
 
-    EMCC_WASM_FLAGS=(-s EXPORTED_FUNCTIONS=_main -s EXPORTED_RUNTIME_METHODS=ccall,cwrap -s INCOMING_MODULE_JS_API=arguments)
-
-    CVC5_CONFIGURE_OPTS=(--static --static-binary --no-tracing --no-assertions
-                        --no-debug-symbols --no-unit-testing --name=${BUILD_NAME} --auto-download
+    EMCC_WASM_FLAGS=(   
+                        # -s EXPORTED_FUNCTIONS=_main 
+                        -s EXPORTED_RUNTIME_METHODS=ccall,cwrap 
+                        -s INCOMING_MODULE_JS_API=arguments 
+                        -s INVOKE_RUN=1 
+                        -s EXIT_RUNTIME=0
+                        -s ENVIRONMENT=web 
+                        -s MODULARIZE
                         )
-                        #  --no-poly)
 
     CVC5_CONFIGURE_ENV=(LDFLAGS="${EMCC_WASM_FLAGS[@]}")
+
+    CVC5_CONFIGURE_OPTS=(   
+                            --static 
+                            --static-binary # n é obrigatorio
+                            --no-tracing --no-assertions
+                            --no-debug-symbols --no-unit-testing 
+                            --name=${BUILD_NAME} --auto-download
+                            --wasm=WASM
+                        )
+                        #  --no-poly)
 
     cd ${CVC5_DIR}
     env "${CVC5_CONFIGURE_ENV[@]}" emconfigure ./configure.sh "${CVC5_CONFIGURE_OPTS[@]}"
 } >> "${LOG_DIR}config.log" 2>&1
-
 
 echo ""
 echo "-------------------------------"
