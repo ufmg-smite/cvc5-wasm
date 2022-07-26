@@ -6,6 +6,9 @@
 # Author: Vinícius Braga Freire (vinicius.braga.freire@gmail.com)
 ################################################################################
 
+mkdir -p deps
+mkdir -p logs
+
 # Dirs:
 BASE_DIR=$(pwd)
 DEP_DIR=$BASE_DIR/deps/
@@ -17,7 +20,7 @@ CORES_TO_COMPILE=6
 BUILD_NAME=production
 # Log dir:
 cd $LOG_DIR
-rm *
+rm * -f
 
 echo ""
 echo "-------------------------------"
